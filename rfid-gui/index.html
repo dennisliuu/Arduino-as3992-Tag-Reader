@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>RFID Tag Reader UI</title>
+	<link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: 'Press Start 2P', cursive;
+		}
+
+		html {
+			background-color: #2d2f31;
+			color: #eee;
+		}
+
+		form {
+			background: #000;
+			padding: 3px;
+			position: fixed;
+			bottom: 0;
+			width: 100%;
+		}
+
+		form button {
+			width: 100%;
+		}
+
+		#messages {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		#messages li {
+			padding: 5px 10px;
+		}
+
+		#messages li:nth-child(odd) {
+			background: #349b89;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="nes-container is-rounded is-dark with-title is-centered">
+		<div id="board" style="height: 80vh; overflow-y: auto">
+			<p class="title">Board</p>
+			<ul id="messages"></ul>
+		</div>
+	</div>
+	<form action="">
+		<button id="getNum" class="nes-btn is-success">
+			Get<i class="nes-icon coin is-small"></i>
+		</button>
+	</form>
+
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+		integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+	<script>
+		$(function () {
+			// 宣告 Socket
+			var socket = io()
+
+			// 當 button 被按下時，透過 Sockrt 傳送資料
+			$('form').submit(function (e) {
+				e.preventDefault() // prevents page reloading
+				socket.emit('rfid message', "")
+				return false;
+			});
+
+			// Socket 接收資料，並加入清單 list
+			socket.on('rfid message', function (msg) {
+				$('#messages').append($('<li>').text(msg))
+
+				// 自動滑到最下方
+				var board = document.getElementById("board");
+				board.scrollTop = board.scrollHeight;
+			});
+		});
+	</script>
+</body>
+
+</html>
